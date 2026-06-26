@@ -70,12 +70,13 @@
         <p class="lead">${S("늦잠·미루기·작심삼일까지 — 당신의 게으름을 보장하는 보험 플랫폼", "An insurance platform that covers your laziness — oversleep, procrastination, broken resolutions")}</p>
         <div class="url">Hanwha Life × LIFE Hackathon</div>` },
       { cls: "", render: () => `
-        <div class="tag">${S("문제", "The Problem")}</div>
-        <h2>${S("의지는 평균 3일을 못 넘긴다", "Willpower rarely lasts 3 days")}</h2>
-        <ul class="points">
-          <li>${S("헬스장은 <b>등록만</b> 하고 안 가고, 인강은 <b>결제만</b> 하고 안 듣는다", "We <b>sign up</b> for the gym but never go; <b>pay</b> for courses but never watch")}</li>
-          <li>${S("동기부여 앱 알림은 그냥 무시하면 그만 — <b>강제력이 없다</b>", "You can just ignore motivation-app alerts — <b>there's no real force</b>")}</li>
-          <li>${S("보험은 큰 '사고'만 보장, <b>일상의 작은 게으름</b>은 아무도 안 다룬다", "Insurance covers big 'accidents' — <b>nobody covers everyday laziness</b>")}</li>
+        <div class="tag">${S("문제 — 게으름은 사회적 문제다", "The Problem — laziness is now social")}</div>
+        <div style="font-size:7rem;font-weight:800;color:var(--orange);line-height:1;letter-spacing:-3px">80%</div>
+        <h2 style="font-size:2.2rem;margin-top:6px">${S("영(MZ) 제너레이션이 게으름·미루기로 힘들어하는 시대", "of the young (MZ) generation struggle with laziness & procrastination")}</h2>
+        <ul class="points" style="margin-top:22px">
+          <li>${S("의지는 평균 3일 — 헬스장은 <b>등록만</b>, 인강은 <b>결제만</b>", "Willpower lasts ~3 days — <b>sign up</b> but never go, <b>pay</b> but never watch")}</li>
+          <li>${S("동기부여 앱 알림은 무시하면 그만 — <b>행동을 강제할 장치가 없다</b>", "Alerts are easy to ignore — <b>no mechanism forces action</b>")}</li>
+          <li>${S("보험은 큰 사고만 보장 — <b>이 거대한 시장은 아무도 안 건드렸다</b>", "Insurance covers only big accidents — <b>this huge market is untapped</b>")}</li>
         </ul>` },
       { cls: "brand", render: () => `
         <div class="tag">${S("인사이트", "The Insight")}</div>
@@ -149,7 +150,8 @@
         <p class="lead">${S("감사합니다!", "Thank you!")}</p>` },
     ];
 
-    let i = 0;
+    let i = parseInt(new URLSearchParams(location.search).get("s") || "0", 10);
+    if (isNaN(i) || i < 0 || i >= slides.length) i = 0;
     const deck = document.getElementById("deck");
     function render() {
       deck.innerHTML = slides.map((s, n) =>
