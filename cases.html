@@ -11,12 +11,10 @@
   <main>
     <section class="dark-hero">
       <p class="dh-eyebrow">REAL CASES</p>
-      <h1>게으름을 극복한 실제 사례</h1>
-      <p>lazylab 가입자들이 디포짓을 건 뒤 어떻게 달라졌는지 확인해 보세요.</p>
+      <h1 id="dh-title"></h1>
+      <p id="dh-sub"></p>
     </section>
-    <section class="list-wrap">
-      <div class="case-grid" id="case-grid"></div>
-    </section>
+    <section class="list-wrap"><div class="case-grid" id="case-grid"></div></section>
   </main>
   <footer id="site-footer"></footer>
 
@@ -24,13 +22,17 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
-    document.getElementById("case-grid").innerHTML = SUCCESS_CASES.map(
+    const T = window.t, EN = window.LANG === "en";
+    document.getElementById("dh-title").textContent = T("게으름을 극복한 실제 사례", "Real stories of beating laziness");
+    document.getElementById("dh-sub").textContent = T("lazylab 가입자들이 디포짓을 건 뒤 어떻게 달라졌는지 확인해 보세요.", "See how lazylab members changed after staking a deposit.");
+    const CASES = EN && window.EN_CASES ? window.EN_CASES : SUCCESS_CASES;
+    document.getElementById("case-grid").innerHTML = CASES.map(
       (c, i) => `<a class="ccard" href="case.html?id=${i}">
-        <div class="ccard-head"><span class="ccard-emoji">${c.emoji}</span><b>${c.name}</b><time>${c.date}</time></div>
-        <h5>${c.title}</h5>
-        <p>${c.desc}</p>
+        <div class="ccard-head"><span class="ccard-emoji">${SUCCESS_CASES[i].emoji}</span><b>${c.name}</b><time>${c.date}</time></div>
+        <h5>${c.title}</h5><p>${c.desc}</p>
         <span class="result-badge">⚖️ ${c.badge}</span>
       </a>`
     ).join("");

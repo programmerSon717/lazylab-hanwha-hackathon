@@ -34,6 +34,7 @@
 - 📄 **영문 보험약관 PDF** : 상품별 정식 약관체(Policy Wording) PDF 9종 — 동의/서명 포함
 - 🤖 **게으름 상담 챗봇** : 전 페이지 플로팅 챗봇, 물으면 바로 상품 추천
 - 📰 **뉴스/사례/후기** : 가상 기자·방송사(JTBC·SBS·MBC·KBS) 기사, 보장 성공 사례, 가입 후기
+- 🌐 **한국어 / English** : 우측 상단 Language 토글로 전 페이지 영어 전환 (`?lang=en` 링크도 지원)
 
 ---
 
@@ -125,6 +126,7 @@
 ├─ content.js               # 보험 상품 9종 데이터 + 매칭 로직
 ├─ platform-data.js         # 사례·후기·뉴스·기사 데이터
 ├─ terms-data.js            # 약관 상세 데이터 (상품상세 + PDF 공용)
+├─ i18n.js                  # 한/영 전환 + 영어 데이터/문구
 ├─ config.js                # 프론트 공개 설정 (카카오 REST 키 등)
 ├─ netlify/functions/       # 카카오 로그인/페이 서버리스 함수
 ├─ policies/                # 영문 약관 PDF + 생성 HTML

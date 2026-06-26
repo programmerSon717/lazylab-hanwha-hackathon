@@ -11,12 +11,10 @@
   <main>
     <section class="dark-hero">
       <p class="dh-eyebrow">LAZY NEWS</p>
-      <h1>게으름연구소 뉴스</h1>
-      <p>게으름에 관한 (수상할 만큼 진지한) 연구와 소식.</p>
+      <h1 id="dh-title"></h1>
+      <p id="dh-sub"></p>
     </section>
-    <section class="list-wrap">
-      <div class="news-cols" id="news-cols"></div>
-    </section>
+    <section class="list-wrap"><div class="news-cols" id="news-cols"></div></section>
   </main>
   <footer id="site-footer"></footer>
 
@@ -24,13 +22,18 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
-    const idx = ARTICLES.map((a, i) => ({ a, i }));
-    const hot = idx.filter((x) => x.a.hot), fresh = idx.filter((x) => !x.a.hot);
+    const T = window.t, EN = window.LANG === "en";
+    document.getElementById("dh-title").textContent = T("게으름연구소 뉴스", "Institute of Laziness News");
+    document.getElementById("dh-sub").textContent = T("게으름에 관한 (수상할 만큼 진지한) 연구와 소식.", "Suspiciously serious research and news about laziness.");
+    const AR = EN && window.EN_ARTICLES ? window.EN_ARTICLES : ARTICLES;
+    const idx = ARTICLES.map((a, i) => ({ i, hot: a.hot, title: AR[i].title }));
+    const hot = idx.filter((x) => x.hot), fresh = idx.filter((x) => !x.hot);
     document.getElementById("news-cols").innerHTML = `
-      <div class="news-col"><h4>실시간 인기 뉴스</h4>${hot.map(({ a, i }, r) => `<a class="news-item" href="article.html?id=${i}"><span class="rank">${r + 1}</span>${a.title}</a>`).join("")}</div>
-      <div class="news-col"><h4>최신 뉴스</h4>${fresh.map(({ a, i }) => `<a class="news-item dot" href="article.html?id=${i}">${a.title}</a>`).join("")}</div>`;
+      <div class="news-col"><h4>${T("실시간 인기 뉴스", "Trending")}</h4>${hot.map((x, r) => `<a class="news-item" href="article.html?id=${x.i}"><span class="rank">${r + 1}</span>${x.title}</a>`).join("")}</div>
+      <div class="news-col"><h4>${T("최신 뉴스", "Latest")}</h4>${fresh.map((x) => `<a class="news-item dot" href="article.html?id=${x.i}">${x.title}</a>`).join("")}</div>`;
   </script>
 </body>
 </html>

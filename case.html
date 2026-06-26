@@ -15,47 +15,44 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
-    const won = LZ.won;
+    const T = window.t, won = LZ.won, EN = window.LANG === "en";
     const i = parseInt(LZ.qs("id") || "0", 10);
-    const c = SUCCESS_CASES[i] || SUCCESS_CASES[0];
-    const p = LZ.byId(c.pid) || PRODUCTS[0];
-    const m = PRODUCT_META[p.id] || {};
+    const cKo = SUCCESS_CASES[i] || SUCCESS_CASES[0];
+    const c = (EN && window.EN_CASES ? window.EN_CASES[i] : cKo) || cKo;
+    const p0 = LZ.byId(cKo.pid) || PRODUCTS[0];
+    const p = window.LP(p0);
+    const m = window.LMETA(p0.id);
     document.title = c.title + " — lazylab";
 
-    const others = SUCCESS_CASES.filter((_, j) => j !== i)
-      .map((x) => `<li><a href="case.html?id=${SUCCESS_CASES.indexOf(x)}">· [${x.badge}] ${x.title}</a></li>`).join("");
+    const CASES = EN && window.EN_CASES ? window.EN_CASES : SUCCESS_CASES;
+    const others = CASES.map((x, j) => ({ x, j })).filter((o) => o.j !== i)
+      .map((o) => `<li><a href="case.html?id=${o.j}">· [${o.x.badge}] ${o.x.title}</a></li>`).join("");
 
     document.getElementById("page").innerHTML = `
       <section class="dark-hero case-hero">
         <span class="case-badge">${c.badge}</span>
-        <h1>${c.emoji} ${c.title}</h1>
-        <p>${c.name} · ${c.date} · 조회수 ${c.views}</p>
+        <h1>${cKo.emoji} ${c.title}</h1>
+        <p>${c.name} · ${c.date} · ${T("조회수", "Views")} ${c.views}</p>
       </section>
-
       <article class="doc case-body">
-        <h3 class="d-sec">1. 상황</h3>
+        <h3 class="d-sec">${T("1. 상황", "1. Situation")}</h3>
         <p>${c.situation}</p>
-        <h3 class="d-sec">2. 처방 — 가입한 보험</h3>
+        <h3 class="d-sec">${T("2. 처방 — 가입한 보험", "2. Prescription — the policy")}</h3>
         <p>${c.prescription}</p>
-        <a class="product-inline" href="product.html?id=${p.id}">
-          <span>${p.emoji}</span><div><b>${p.name}</b><small>월 ${won(p.premium)} · 디포짓 ${won(p.deposit)} · ${m.tag||""}</small></div><em>상품 보기 ›</em>
+        <a class="product-inline" href="product.html?id=${p0.id}">
+          <span>${p0.emoji}</span><div><b>${p.name}</b><small>${won(p0.premium)} · ${won(p0.deposit)} · ${m.tag || ""}</small></div><em>${T("상품 보기", "View product")} ›</em>
         </a>
-        <h3 class="d-sec">3. 결과</h3>
+        <h3 class="d-sec">${T("3. 결과", "3. Result")}</h3>
         <p>${c.result}</p>
-
-        <p class="copyright">lazylab의 모든 콘텐츠는 저작권법의 보호를 받습니다. (패러디)<br><small>본 사례는 해커톤 데모용으로 작성된 가상의 사례입니다.</small></p>
-
+        <p class="copyright">${T("lazylab의 모든 콘텐츠는 저작권법의 보호를 받습니다. (패러디)", "All lazylab content is protected by copyright. (Parody)")}<br><small>${T("본 사례는 해커톤 데모용으로 작성된 가상의 사례입니다.", "This case is fictitious, created for the hackathon demo.")}</small></p>
         <div class="designer-card">
-          <div class="designer-info"><span class="d-ava">🐢</span><div><b>${c.designer}</b><small>게으름연구소 · lazylab 공식</small></div></div>
-          <a class="btn-primary" href="signup.html?id=${p.id}">설계사 가입 상담 예약 ›</a>
+          <div class="designer-info"><span class="d-ava">🐢</span><div><b>${c.designer}</b><small>${T("게으름연구소 · lazylab 공식", "Institute of Laziness · lazylab official")}</small></div></div>
+          <a class="btn-primary" href="signup.html?id=${p0.id}">${T("설계사 가입 상담 예약", "Book a consultation")} ›</a>
         </div>
-
-        <div class="other-posts">
-          <h4>${c.designer}가 도운 다른 사례</h4>
-          <ul>${others}</ul>
-        </div>
+        <div class="other-posts"><h4>${T(c.designer + "가 도운 다른 사례", "Other cases by " + c.designer)}</h4><ul>${others}</ul></div>
       </article>`;
   </script>
 </body>

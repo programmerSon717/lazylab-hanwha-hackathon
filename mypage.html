@@ -15,56 +15,53 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
-    const won = LZ.won;
+    const T = window.t, won = LZ.won;
     const user = localStorage.getItem("lz_user");
     const ids = (() => { try { return JSON.parse(localStorage.getItem("lz_products") || "[]"); } catch (e) { return []; } })();
     const page = document.getElementById("page");
 
     if (!user) {
       page.innerHTML = `<div class="mypage-empty"><div class="empty-ico">🔒</div>
-        <h2>로그인이 필요해요</h2><p>가입한 상품을 보려면 먼저 로그인하세요.</p>
-        <a class="btn-primary" href="signup.html">로그인 / 가입</a></div>`;
+        <h2>${T("로그인이 필요해요", "Please log in")}</h2><p>${T("가입한 상품을 보려면 먼저 로그인하세요.", "Log in to see your policies.")}</p>
+        <a class="btn-primary" href="signup.html">${T("로그인 / 가입", "Log in / Sign up")}</a></div>`;
     } else if (ids.length === 0) {
-      page.innerHTML = `<nav class="breadcrumb">홈 › <b>내 가입 상품</b></nav>
+      page.innerHTML = `<nav class="breadcrumb">${T("홈", "Home")} › <b>${T("내 가입 상품", "My Policies")}</b></nav>
         <div class="mypage-empty"><div class="empty-ico">📭</div>
-        <h2>${user}님, 아직 가입한 상품이 없어요</h2><p>게으름을 보장받고 디포짓을 돌려받아 보세요!</p>
-        <a class="btn-primary" href="index.html#products">상품 둘러보기</a></div>`;
+        <h2>${T(user + "님, 아직 가입한 상품이 없어요", user + ", you have no policies yet")}</h2><p>${T("게으름을 보장받고 디포짓을 돌려받아 보세요!", "Get your laziness covered and earn your deposit back!")}</p>
+        <a class="btn-primary" href="index.html#products">${T("상품 둘러보기", "Browse products")}</a></div>`;
     } else {
       const cards = ids.map((id) => {
-        const p = LZ.byId(id); if (!p) return "";
-        const m = PRODUCT_META[id] || {};
+        const p0 = LZ.byId(id); if (!p0) return "";
+        const p = window.LP(p0), m = window.LMETA(id);
         return `<div class="my-card">
-          <div class="my-top"><span class="my-emoji">${p.emoji}</span>
-            <div><span class="my-tag">${m.tag || "게으름"}</span>
-              <b>${p.name}</b><small>${p.tagline}</small></div>
-            <span class="my-status">가입중</span>
+          <div class="my-top"><span class="my-emoji">${p0.emoji}</span>
+            <div><span class="my-tag">${m.tag || ""}</span><b>${p.name}</b><small>${p.tagline}</small></div>
+            <span class="my-status">${T("가입중", "Active")}</span>
           </div>
           <div class="my-info">
-            <span>월 보험료 <b>${won(p.premium)}</b></span>
-            <span>환급 디포짓 <b>${won(p.deposit)}</b></span>
+            <span>${T("월 보험료", "Premium")} <b>${won(p0.premium)}</b></span>
+            <span>${T("환급 디포짓", "Deposit")} <b>${won(p0.deposit)}</b></span>
           </div>
           <div class="my-actions">
-            <a class="btn-primary sm" href="policies/${id}.pdf" target="_blank" rel="noopener">📄 보험약관 (PDF)</a>
-            <a class="btn-ghost sm" href="product.html?id=${id}">상품 상세</a>
-            <button class="btn-ghost sm my-cancel" data-id="${id}">해지</button>
+            <a class="btn-primary sm" href="policies/${id}.pdf" target="_blank" rel="noopener">📄 ${T("보험약관 (PDF)", "Policy Wording (PDF)")}</a>
+            <a class="btn-ghost sm" href="product.html?id=${id}">${T("상품 상세", "Details")}</a>
+            <button class="btn-ghost sm my-cancel" data-id="${id}">${T("해지", "Cancel")}</button>
           </div>
         </div>`;
       }).join("");
-      page.innerHTML = `<nav class="breadcrumb">홈 › <b>내 가입 상품</b></nav>
-        <h1 class="dp-title" style="font-size:24px">${user}님의 가입 상품 <span style="color:var(--orange)">${ids.length}</span></h1>
-        <p class="dp-meta" style="border:none">가입한 상품의 영문 보험약관(Policy Wording)을 PDF로 확인할 수 있어요.</p>
+      page.innerHTML = `<nav class="breadcrumb">${T("홈", "Home")} › <b>${T("내 가입 상품", "My Policies")}</b></nav>
+        <h1 class="dp-title" style="font-size:24px">${T(user + "님의 가입 상품", user + "'s policies")} <span style="color:var(--orange)">${ids.length}</span></h1>
+        <p class="dp-meta" style="border:none">${T("가입한 상품의 영문 보험약관(Policy Wording)을 PDF로 확인할 수 있어요.", "View each policy's English Policy Wording as a PDF.")}</p>
         <div class="my-list">${cards}</div>`;
-
       page.querySelectorAll(".my-cancel").forEach((b) =>
         b.addEventListener("click", () => {
-          if (!confirm("정말 해지하시겠어요? (디포짓은 환급되지 않습니다 — 패러디)")) return;
-          const next = ids.filter((x) => x !== b.dataset.id);
-          localStorage.setItem("lz_products", JSON.stringify(next));
+          if (!confirm(T("정말 해지하시겠어요? (디포짓은 환급되지 않습니다 — 패러디)", "Cancel for real? (Deposit is non-refundable — parody)"))) return;
+          localStorage.setItem("lz_products", JSON.stringify(ids.filter((x) => x !== b.dataset.id)));
           location.reload();
-        })
-      );
+        }));
     }
   </script>
 </body>

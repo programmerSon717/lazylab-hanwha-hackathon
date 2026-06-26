@@ -15,62 +15,58 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
-    const won = LZ.won;
+    const T = window.t, won = LZ.won, C = window.LAZY_CONFIG || {};
     const params = new URLSearchParams(location.search);
     const pid = params.get("id");
-    const p = LZ.byId(pid);
+    const p0 = LZ.byId(pid);
+    const p = p0 ? window.LP(p0) : null;
     const page = document.getElementById("page");
-    const C = window.LAZY_CONFIG || {};
+
+    const selCard = p ? `<div class="auth-product"><span>${p0.emoji}</span><div><b>${p.name}</b><small>${T("월", "")} ${won(p0.premium)} · ${T("디포짓", "deposit")} ${won(p0.deposit)}</small></div></div>` : "";
 
     function loggedIn(name) {
       localStorage.setItem("lz_user", name);
       page.innerHTML = `
         <div class="auth-card done">
           <div class="check-lg">✓</div>
-          <h2>${name}님, 환영해요!</h2>
-          <p>카카오 계정으로 로그인되었습니다.</p>
-          ${p ? `<div class="auth-product" style="margin-top:18px"><span>${p.emoji}</span><div><b>${p.name}</b><small>월 ${won(p.premium)} · 디포짓 ${won(p.deposit)}</small></div></div>` : ""}
+          <h2>${T(name + "님, 환영해요!", "Welcome, " + name + "!")}</h2>
+          <p>${T("카카오 계정으로 로그인되었습니다.", "Logged in with your Kakao account.")}</p>
+          ${p ? `<div class="auth-product" style="margin-top:18px"><span>${p0.emoji}</span><div><b>${p.name}</b><small>${won(p0.premium)} · ${won(p0.deposit)}</small></div></div>` : ""}
           <div class="done-actions" style="margin-top:20px">
-            ${p ? `<a class="btn-primary" href="checkout.html?id=${p.id}">결제하고 가입 완료 →</a>` : `<a class="btn-primary" href="index.html">홈으로</a>`}
-            <a class="btn-ghost" href="index.html">${p ? "다음에" : "둘러보기"}</a>
+            ${p ? `<a class="btn-primary" href="checkout.html?id=${p0.id}">${T("결제하고 가입 완료 →", "Pay & finish enrollment →")}</a>` : `<a class="btn-primary" href="index.html">${T("홈으로", "Home")}</a>`}
+            <a class="btn-ghost" href="index.html">${p ? T("다음에", "Later") : T("둘러보기", "Browse")}</a>
           </div>
-          <p class="auth-legal">※ 카카오 로그인은 실제 연동입니다(키 설정 시). 결제는 카카오페이 테스트입니다.</p>
+          <p class="auth-legal">${T("※ 카카오 로그인은 실제 연동입니다. 결제는 카카오페이 테스트입니다.", "※ Kakao login is a real integration. Payment is a KakaoPay test.")}</p>
         </div>`;
     }
 
     function signupCard() {
-      const sel = p
-        ? `<div class="auth-product"><span>${p.emoji}</span><div><b>${p.name}</b><small>월 ${won(p.premium)} · 디포짓 ${won(p.deposit)}</small></div></div>`
-        : "";
       page.innerHTML = `
         <div class="auth-card">
-          <div class="auth-tabs"><button class="active">간편 가입</button><button>기존 회원 로그인</button></div>
-          <p class="auth-promo">지금 가입 시, <b>첫 달 디포짓 100% 보장!</b></p>
+          <div class="auth-tabs"><button class="active">${T("간편 가입", "Quick sign-up")}</button><button>${T("기존 회원 로그인", "Member login")}</button></div>
+          <p class="auth-promo">${T("지금 가입 시, ", "Sign up now — ")}<b>${T("첫 달 디포짓 100% 보장!", "first-month deposit 100% covered!")}</b></p>
           <div class="auth-illust">💌<span class="auth-badge">100%</span></div>
-          ${sel}
-          <button class="sso kakao" data-sso="kakao">💬 카카오로 3초 만에 시작하기</button>
-          <button class="sso naver" data-sso="네이버">Ⓝ 네이버로 계속하기</button>
-          <button class="sso apple" data-sso="애플"> 애플로 계속하기</button>
-          <div class="auth-or"><span>또는</span></div>
-          <button class="sso lazy" data-sso="lazylab">🐢 lazylab 계정으로 가입</button>
-          <a class="auth-guest" href="index.html">비회원으로 둘러보기</a>
-          <p class="auth-legal">${window.KAKAO_ENABLED ? "카카오는 실제 로그인으로 연결됩니다." : "※ 카카오 키 미설정 — 현재 데모 모드입니다."} · 해커톤 패러디</p>
+          ${selCard}
+          <button class="sso kakao" data-sso="kakao">💬 ${T("카카오로 3초 만에 시작하기", "Continue with Kakao in 3s")}</button>
+          <button class="sso naver" data-sso="${T("네이버", "Naver")}">Ⓝ ${T("네이버로 계속하기", "Continue with Naver")}</button>
+          <button class="sso apple" data-sso="${T("애플", "Apple")}"> ${T("애플로 계속하기", "Continue with Apple")}</button>
+          <div class="auth-or"><span>${T("또는", "or")}</span></div>
+          <button class="sso lazy" data-sso="lazylab">🐢 ${T("lazylab 계정으로 가입", "Sign up with lazylab")}</button>
+          <a class="auth-guest" href="index.html">${T("비회원으로 둘러보기", "Browse as guest")}</a>
+          <p class="auth-legal">${window.KAKAO_ENABLED ? T("카카오는 실제 로그인으로 연결됩니다.", "Kakao connects to a real login.") : T("※ 카카오 키 미설정 — 현재 데모 모드입니다.", "※ Kakao key not set — demo mode.")} · ${T("해커톤 패러디", "Hackathon parody")}</p>
         </div>`;
-
       page.querySelectorAll("[data-sso]").forEach((b) =>
         b.addEventListener("click", () => {
           const kind = b.dataset.sso;
           if (kind === "kakao" && window.KAKAO_ENABLED) {
-            // 실제 카카오 로그인
             location.href = C.API_BASE + "/kakao-login" + (pid ? "?id=" + encodeURIComponent(pid) : "");
             return;
           }
-          // 데모 (그 외 SSO 또는 키 미설정)
-          demoDone(kind === "kakao" ? "카카오" : kind);
-        })
-      );
+          demoDone(kind === "kakao" ? T("카카오", "Kakao") : kind);
+        }));
     }
 
     function demoDone(method) {
@@ -78,21 +74,20 @@
       page.innerHTML = `
         <div class="auth-card done">
           <div class="check-lg">✓</div>
-          <h2>가입 완료!</h2>
-          <p>${method} 계정으로 가입되었습니다.${p ? `<br><b>${p.name}</b> 가입 진행 중.` : ""}</p>
-          <p class="auth-promo2">이제 게으름은 lazylab이 책임집니다. 😌</p>
+          <h2>${T("가입 완료!", "Sign-up complete!")}</h2>
+          <p>${T("", "Signed up with ")}${method}${T(" 계정으로 가입되었습니다.", ".")}${p ? `<br><b>${p.name}</b>${T(" 가입 진행 중.", " in progress.")}` : ""}</p>
+          <p class="auth-promo2">${T("이제 게으름은 lazylab이 책임집니다. 😌", "Your laziness is now on lazylab. 😌")}</p>
           <div class="done-actions">
-            ${p ? `<a class="btn-primary" href="checkout.html?id=${p.id}">결제하기 →</a>` : `<a class="btn-primary" href="index.html">홈으로</a>`}
-            <a class="btn-ghost" href="reviews.html">후기 보기</a>
+            ${p ? `<a class="btn-primary" href="checkout.html?id=${p0.id}">${T("결제하기 →", "Pay →")}</a>` : `<a class="btn-primary" href="index.html">${T("홈으로", "Home")}</a>`}
+            <a class="btn-ghost" href="reviews.html">${T("후기 보기", "Reviews")}</a>
           </div>
-          <p class="auth-legal">※ 데모 · 실제 결제는 발생하지 않습니다.</p>
+          <p class="auth-legal">${T("※ 데모 · 실제 결제는 발생하지 않습니다.", "※ Demo · no real payment occurs.")}</p>
         </div>`;
     }
 
-    // 라우팅
     const login = params.get("login");
-    if (login === "ok") loggedIn(params.get("name") || "회원");
-    else if (login === "err") { alert("카카오 로그인 실패: " + (params.get("reason") || "원인 미상") ); signupCard(); }
+    if (login === "ok") loggedIn(params.get("name") || T("회원", "Member"));
+    else if (login === "err") { alert(T("카카오 로그인 실패: ", "Kakao login failed: ") + (params.get("reason") || T("원인 미상", "unknown"))); signupCard(); }
     else signupCard();
   </script>
 </body>

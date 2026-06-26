@@ -15,109 +15,101 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
-    const won = LZ.won;
-    const C = window.LAZY_CONFIG || {};
+    const T = window.t, won = LZ.won, C = window.LAZY_CONFIG || {};
     const params = new URLSearchParams(location.search);
-    const p = LZ.byId(params.get("id")) || PRODUCTS[0];
-    const first = p.premium + p.deposit;
+    const p0 = LZ.byId(params.get("id")) || PRODUCTS[0];
+    const p = window.LP(p0);
+    const first = p0.premium + p0.deposit;
     const pageEl = document.getElementById("page");
-    document.title = "결제 — " + p.name;
+    document.title = T("결제 — ", "Checkout — ") + p.name;
 
     function showDone(method) {
-      // 가입 상품 기록 (마이페이지에서 사용)
       try {
         const list = JSON.parse(localStorage.getItem("lz_products") || "[]");
-        if (!list.includes(p.id)) { list.push(p.id); localStorage.setItem("lz_products", JSON.stringify(list)); }
+        if (!list.includes(p0.id)) { list.push(p0.id); localStorage.setItem("lz_products", JSON.stringify(list)); }
       } catch (e) {}
       pageEl.innerHTML = `
         <div class="pay-done">
           <div class="check-lg">✓</div>
-          <h2>결제 완료!</h2>
-          <p><b>${p.name}</b>에 가입되었습니다.</p>
+          <h2>${T("결제 완료!", "Payment complete!")}</h2>
+          <p>${T("", "You've enrolled in ")}<b>${p.name}</b>${T("에 가입되었습니다.", ".")}</p>
           <div class="receipt">
-            <div class="co-row"><span>상품</span><b>${p.emoji} ${p.name}</b></div>
-            <div class="co-row"><span>결제수단</span><b>${method}</b></div>
-            <div class="co-row"><span>월 보험료</span><b>${won(p.premium)}</b></div>
-            <div class="co-row"><span>환급 디포짓</span><b>${won(p.deposit)}</b></div>
-            <div class="co-total"><span>결제 금액</span><b>${won(first)}</b></div>
+            <div class="co-row"><span>${T("상품", "Product")}</span><b>${p0.emoji} ${p.name}</b></div>
+            <div class="co-row"><span>${T("결제수단", "Method")}</span><b>${method}</b></div>
+            <div class="co-row"><span>${T("월 보험료", "Monthly premium")}</span><b>${won(p0.premium)}</b></div>
+            <div class="co-row"><span>${T("환급 디포짓", "Refundable deposit")}</span><b>${won(p0.deposit)}</b></div>
+            <div class="co-total"><span>${T("결제 금액", "Total paid")}</span><b>${won(first)}</b></div>
           </div>
-          <p class="pay-msg">이제 게으름은 lazylab이 책임집니다. 😌<br>${p.refund}</p>
+          <p class="pay-msg">${T("이제 게으름은 lazylab이 책임집니다. 😌", "Your laziness is now on lazylab. 😌")}<br>${p.refund}</p>
           <div class="done-actions">
-            <a class="btn-primary" href="index.html">홈으로</a>
-            <a class="btn-ghost" href="reviews.html">가입 후기 보기</a>
+            <a class="btn-primary" href="index.html">${T("홈으로", "Home")}</a>
+            <a class="btn-ghost" href="mypage.html">${T("내 가입 상품", "My policies")}</a>
           </div>
-          <p class="co-legal">※ 카카오페이는 테스트 결제(TC0ONETIME)이며 실제 청구는 발생하지 않습니다.</p>
+          <p class="co-legal">${T("※ 카카오페이는 테스트 결제(TC0ONETIME)이며 실제 청구는 발생하지 않습니다.", "※ KakaoPay is a test payment (TC0ONETIME); no real charge occurs.")}</p>
         </div>`;
       window.scrollTo(0, 0);
     }
 
-    // 카카오페이 승인 복귀 처리
     if (params.get("pay") === "approve" && params.get("pg_token")) {
       const saved = JSON.parse(sessionStorage.getItem("lz_pay") || "{}");
-      fetch(C.API_BASE + "/pay-approve", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tid: saved.tid, order: saved.order, pg_token: params.get("pg_token") }),
-      })
-        .then((r) => r.json())
-        .then((d) => {
+      fetch(C.API_BASE + "/pay-approve", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tid: saved.tid, order: saved.order, pg_token: params.get("pg_token") }) })
+        .then((r) => r.json()).then((d) => {
           sessionStorage.removeItem("lz_pay");
-          if (d && (d.aid || d.amount)) showDone("카카오페이");
-          else { alert("결제 승인에 실패했어요."); renderForm(); }
-        })
-        .catch(() => { alert("결제 승인 중 오류가 발생했어요."); renderForm(); });
+          if (d && (d.aid || d.amount)) showDone(T("카카오페이", "KakaoPay"));
+          else { alert(T("결제 승인에 실패했어요.", "Payment approval failed.")); renderForm(); }
+        }).catch(() => { alert(T("결제 승인 중 오류가 발생했어요.", "An error occurred during approval.")); renderForm(); });
     } else if (params.get("pay") === "cancel") {
-      alert("결제가 취소되었습니다."); history.replaceState({}, "", "checkout.html?id=" + p.id); renderForm();
+      alert(T("결제가 취소되었습니다.", "Payment cancelled.")); history.replaceState({}, "", "checkout.html?id=" + p0.id); renderForm();
     } else if (params.get("pay") === "fail") {
-      alert("결제에 실패했습니다."); history.replaceState({}, "", "checkout.html?id=" + p.id); renderForm();
-    } else {
-      renderForm();
-    }
+      alert(T("결제에 실패했습니다.", "Payment failed.")); history.replaceState({}, "", "checkout.html?id=" + p0.id); renderForm();
+    } else { renderForm(); }
 
     function renderForm() {
       const methods = [
-        ["card", "💳 신용/체크카드", true],
-        ["kakaopay", "💬 카카오페이", false],
-        ["naverpay", "Ⓝ 네이버페이", false],
-        ["bank", "🏦 계좌이체", false],
+        ["card", T("💳 신용/체크카드", "💳 Credit / Debit card"), true],
+        ["kakaopay", T("💬 카카오페이", "💬 KakaoPay"), false],
+        ["naverpay", T("Ⓝ 네이버페이", "Ⓝ NaverPay"), false],
+        ["bank", T("🏦 계좌이체", "🏦 Bank transfer"), false],
       ];
       const agrees = [
-        ["age", "[필수] 만 19세 이상입니다", true],
-        ["terms", "[필수] 보험 약관 및 디포짓 환급 조건에 동의합니다", true],
-        ["privacy", "[필수] 개인정보 수집·이용에 동의합니다", true],
-        ["marketing", "[선택] 게으름 극복 알림 수신에 동의합니다", false],
+        ["age", T("[필수] 만 19세 이상입니다", "[Required] I am 19 or older"), true],
+        ["terms", T("[필수] 보험 약관 및 디포짓 환급 조건에 동의합니다", "[Required] I agree to the policy terms and deposit refund conditions"), true],
+        ["privacy", T("[필수] 개인정보 수집·이용에 동의합니다", "[Required] I consent to the collection and use of personal data"), true],
+        ["marketing", T("[선택] 게으름 극복 알림 수신에 동의합니다", "[Optional] I agree to receive beat-laziness notifications"), false],
       ];
       pageEl.innerHTML = `
-        <nav class="breadcrumb">홈 › 가입 › <b>결제</b></nav>
-        <h1 class="dp-title" style="font-size:26px">결제하기</h1>
+        <nav class="breadcrumb">${T("홈", "Home")} › ${T("가입", "Sign-up")} › <b>${T("결제", "Checkout")}</b></nav>
+        <h1 class="dp-title" style="font-size:26px">${T("결제하기", "Checkout")}</h1>
         <div class="checkout-grid">
           <div class="co-main">
-            <section class="co-card"><h3>주문 상품</h3>
-              <div class="co-product"><span class="co-emoji">${p.emoji}</span>
-                <div><b>${p.name}</b><small>${p.tagline}</small><a class="co-link" href="product.html?id=${p.id}">상품 상세 ›</a></div>
+            <section class="co-card"><h3>${T("주문 상품", "Your order")}</h3>
+              <div class="co-product"><span class="co-emoji">${p0.emoji}</span>
+                <div><b>${p.name}</b><small>${p.tagline}</small><a class="co-link" href="product.html?id=${p0.id}">${T("상품 상세", "Details")} ›</a></div>
               </div></section>
-            <section class="co-card"><h3>가입자 정보</h3>
-              <div class="co-fields"><label>이름<input type="text" placeholder="홍길동" /></label>
-              <label>휴대폰<input type="tel" placeholder="010-0000-0000" /></label></div></section>
-            <section class="co-card"><h3>결제 수단</h3>
+            <section class="co-card"><h3>${T("가입자 정보", "Subscriber info")}</h3>
+              <div class="co-fields"><label>${T("이름", "Name")}<input type="text" placeholder="${T("홍길동", "John Doe")}" /></label>
+              <label>${T("휴대폰", "Phone")}<input type="tel" placeholder="010-0000-0000" /></label></div></section>
+            <section class="co-card"><h3>${T("결제 수단", "Payment method")}</h3>
               <div class="pay-methods">${methods.map(([v, l, on]) => `<label class="pay-m${on ? " on" : ""}"><input type="radio" name="pay" value="${v}" ${on ? "checked" : ""}/><span>${l}</span></label>`).join("")}</div>
-              <p class="co-note" id="kakao-note" style="display:none">💬 카카오페이를 선택하면 ${window.KAKAO_ENABLED ? "실제 카카오페이 테스트 결제창" : "(키 미설정 시 데모)"}으로 이동합니다.</p>
+              <p class="co-note" id="kakao-note" style="display:none">${T("💬 카카오페이를 선택하면", "💬 Choosing KakaoPay opens")} ${window.KAKAO_ENABLED ? T("실제 카카오페이 테스트 결제창", "the real KakaoPay test window") : T("(키 미설정 시 데모)", "(demo if no key)")}${T("으로 이동합니다.", ".")}</p>
             </section>
-            <section class="co-card"><h3>약관 동의</h3>
-              <label class="agree-all"><input type="checkbox" id="agree-all"/><b>전체 동의</b></label>
+            <section class="co-card"><h3>${T("약관 동의", "Agreements")}</h3>
+              <label class="agree-all"><input type="checkbox" id="agree-all"/><b>${T("전체 동의", "Agree to all")}</b></label>
               <div class="agree-list">${agrees.map(([k, l, req]) => `<label><input type="checkbox" class="agree" data-req="${req}"/>${l}</label>`).join("")}</div>
             </section>
           </div>
           <aside class="co-side"><div class="co-summary">
-            <h3>결제 금액</h3>
-            <div class="co-row"><span>월 보험료</span><b>${won(p.premium)}</b></div>
-            <div class="co-row"><span>환급 디포짓</span><b>${won(p.deposit)}</b></div>
-            <div class="co-note">※ 디포짓은 목표 달성 시 100% 환급됩니다.</div>
-            <div class="co-total"><span>첫 결제 금액</span><b>${won(first)}</b></div>
-            <button class="btn-primary co-pay" id="pay-btn">${won(first)} 결제하고 가입하기</button>
-            <p class="co-legal">※ 해커톤 패러디 · 카카오페이는 테스트 결제입니다.</p>
+            <h3>${T("결제 금액", "Amount")}</h3>
+            <div class="co-row"><span>${T("월 보험료", "Monthly premium")}</span><b>${won(p0.premium)}</b></div>
+            <div class="co-row"><span>${T("환급 디포짓", "Refundable deposit")}</span><b>${won(p0.deposit)}</b></div>
+            <div class="co-note">${T("※ 디포짓은 목표 달성 시 100% 환급됩니다.", "※ The deposit is 100% refunded on goal achievement.")}</div>
+            <div class="co-total"><span>${T("첫 결제 금액", "First payment")}</span><b>${won(first)}</b></div>
+            <button class="btn-primary co-pay" id="pay-btn">${won(first)} ${T("결제하고 가입하기", "Pay & enroll")}</button>
+            <p class="co-legal">${T("※ 해커톤 패러디 · 카카오페이는 테스트 결제입니다.", "※ Hackathon parody · KakaoPay is a test payment.")}</p>
           </div></aside>
         </div>`;
 
@@ -125,41 +117,27 @@
       const boxes = [...document.querySelectorAll(".agree")];
       allBox.addEventListener("change", () => boxes.forEach((b) => (b.checked = allBox.checked)));
       boxes.forEach((b) => b.addEventListener("change", () => (allBox.checked = boxes.every((x) => x.checked))));
-
       const note = document.getElementById("kakao-note");
       document.querySelectorAll('input[name="pay"]').forEach((r) =>
         r.addEventListener("change", () => {
-          document.querySelectorAll(".pay-m").forEach((m) => m.classList.toggle("on", m.querySelector("input").checked));
+          document.querySelectorAll(".pay-m").forEach((mm) => mm.classList.toggle("on", mm.querySelector("input").checked));
           note.style.display = document.querySelector('input[name="pay"]:checked').value === "kakaopay" ? "block" : "none";
-        })
-      );
-
+        }));
       document.getElementById("pay-btn").addEventListener("click", () => {
         const reqOk = boxes.filter((b) => b.dataset.req === "true").every((b) => b.checked);
-        if (!reqOk) { alert("필수 약관에 동의해 주세요."); return; }
+        if (!reqOk) { alert(T("필수 약관에 동의해 주세요.", "Please agree to the required terms.")); return; }
         const sel = document.querySelector('input[name="pay"]:checked');
         const methodLabel = sel.parentElement.innerText.trim();
-
         if (sel.value === "kakaopay" && window.KAKAO_ENABLED) {
-          // 실제 카카오페이 결제 준비 → 결제창으로 이동
-          fetch(C.API_BASE + "/pay-ready", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: p.id, amount: first, name: p.name }),
-          })
-            .then((r) => r.json())
-            .then((d) => {
+          fetch(C.API_BASE + "/pay-ready", { method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: p0.id, amount: first, name: p.name }) })
+            .then((r) => r.json()).then((d) => {
               if (d && d.next && d.tid) {
-                sessionStorage.setItem("lz_pay", JSON.stringify({ tid: d.tid, order: d.order, id: p.id }));
+                sessionStorage.setItem("lz_pay", JSON.stringify({ tid: d.tid, order: d.order, id: p0.id }));
                 location.href = d.next;
-              } else {
-                showDone("카카오페이(데모)");
-              }
-            })
-            .catch(() => showDone("카카오페이(데모)"));
-        } else {
-          showDone(methodLabel);
-        }
+              } else { showDone(T("카카오페이(데모)", "KakaoPay (demo)")); }
+            }).catch(() => showDone(T("카카오페이(데모)", "KakaoPay (demo)")));
+        } else { showDone(methodLabel); }
       });
     }
   </script>

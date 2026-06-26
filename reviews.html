@@ -11,8 +11,8 @@
   <main>
     <section class="dark-hero">
       <p class="dh-eyebrow">REVIEWS</p>
-      <h1>솔직한 가입 후기</h1>
-      <p>게으름을 고백하고 보험을 든 분들의 진짜 이야기.</p>
+      <h1 id="dh-title"></h1>
+      <p id="dh-sub"></p>
     </section>
     <section class="list-wrap">
       <div class="review-summary" id="review-summary"></div>
@@ -25,23 +25,24 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
+    const T = window.t, EN = window.LANG === "en";
+    document.getElementById("dh-title").textContent = T("솔직한 가입 후기", "Honest member reviews");
+    document.getElementById("dh-sub").textContent = T("게으름을 고백하고 보험을 든 분들의 진짜 이야기.", "Real stories from those who confessed their laziness and signed up.");
+    const RV = EN && window.EN_REVIEWS ? window.EN_REVIEWS : REVIEWS;
     const stars = (n) => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
-    const avg = (REVIEWS.reduce((s, r) => s + r.rating, 0) / REVIEWS.length).toFixed(1);
+    const avg = (RV.reduce((s, r) => s + r.rating, 0) / RV.length).toFixed(1);
     document.getElementById("review-summary").innerHTML =
       `<div class="rs-score">${avg}<small>/5</small></div>
-       <div class="rs-meta"><div class="rs-stars">${stars(Math.round(avg))}</div><span>가입 후기 ${REVIEWS.length}건 · 게으름연구소 인증</span></div>`;
-
-    document.getElementById("review-grid").innerHTML = REVIEWS.map((r) => {
-      const p = LZ.byId(r.pid) || {};
+       <div class="rs-meta"><div class="rs-stars">${stars(Math.round(avg))}</div><span>${T("가입 후기", "Reviews")} ${RV.length}${T("건 · 게으름연구소 인증", " · verified by lazylab")}</span></div>`;
+    document.getElementById("review-grid").innerHTML = RV.map((r) => {
+      const p = window.LP(LZ.byId(r.pid) || {});
       return `<div class="rcard">
         <div class="rcard-stars">${stars(r.rating)}</div>
         <p>${r.text}</p>
-        <div class="rcard-foot">
-          <b>${r.who}</b>
-          <a class="rcard-prod" href="product.html?id=${r.pid}">${p.emoji||""} ${p.name||""} ›</a>
-        </div>
+        <div class="rcard-foot"><b>${r.who}</b><a class="rcard-prod" href="product.html?id=${r.pid}">${(LZ.byId(r.pid)||{}).emoji||""} ${p.name||""} ›</a></div>
       </div>`;
     }).join("");
   </script>

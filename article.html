@@ -15,40 +15,40 @@
   <script src="./content.js"></script>
   <script src="./platform-data.js"></script>
   <script src="./terms-data.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./layout.js"></script>
   <script>
+    const T = window.t, EN = window.LANG === "en";
     const i = parseInt(LZ.qs("id") || "0", 10);
-    const a = ARTICLES[i] || ARTICLES[0];
-    document.title = a.title + " — " + a.broadcaster;
+    const aKo = ARTICLES[i] || ARTICLES[0];
+    const a = (EN && window.EN_ARTICLES ? window.EN_ARTICLES[i] : aKo) || aKo;
+    const bc = aKo.broadcaster;
+    document.title = a.title + " — " + bc;
 
     const colors = { JTBC: "#eb1f2a", SBS: "#0a8a3c", MBC: "#0a57c1", KBS: "#1a2e6e" };
-    const bc = a.broadcaster;
-    const body = a.body.map((p) => `<p>${p}</p>`).join("");
-    const others = ARTICLES.map((x, j) => ({ x, j })).filter((o) => o.j !== i).slice(0, 5)
-      .map((o) => `<li><a href="article.html?id=${o.j}">· ${o.x.title}</a></li>`).join("");
+    const body = a.body.map((pp) => `<p>${pp}</p>`).join("");
+    const AR = EN && window.EN_ARTICLES ? window.EN_ARTICLES : ARTICLES;
+    const others = ARTICLES.map((x, j) => ({ j })).filter((o) => o.j !== i).slice(0, 5)
+      .map((o) => `<li><a href="article.html?id=${o.j}">· ${AR[o.j].title}</a></li>`).join("");
 
     document.getElementById("page").innerHTML = `
-      <nav class="breadcrumb">홈 › 뉴스 › <b>${a.category}</b></nav>
+      <nav class="breadcrumb">${T("홈", "Home")} › ${T("뉴스", "News")} › <b>${a.category}</b></nav>
       <article class="article">
         <span class="art-channel" style="background:${colors[bc] || "#333"}">${bc} NEWS</span>
         <h1 class="art-title">${a.title}</h1>
         <div class="art-byline">
           <span class="art-cat">${a.category}</span>
-          <span>${a.reporter} 기자</span>
-          <span>·</span>
-          <span>${a.date}</span>
-          <span>·</span>
-          <span>${bc}</span>
+          <span>${a.reporter} ${T("기자", "reporter")}</span><span>·</span><span>${aKo.date}</span><span>·</span><span>${bc}</span>
         </div>
         <div class="art-hero" style="background:linear-gradient(135deg, ${colors[bc] || "#333"}22, ${colors[bc] || "#333"}08)">
           <span class="art-hero-ico">📰</span>
-          <span class="art-hero-cap">${bc} 단독 — 게으름연구소 제공</span>
+          <span class="art-hero-cap">${bc} ${T("단독 — 게으름연구소 제공", "Exclusive — courtesy of the Institute of Laziness")}</span>
         </div>
         <div class="art-body">${body}</div>
-        <p class="art-reporter">${a.reporter} 기자 (${a.reporter.toLowerCase().replace(/[^a-z]/g,"") || "reporter"}@${bc.toLowerCase()}.example)</p>
-        <div class="art-disclaimer">※ 본 기사는 한화 라이프 × LIFE 해커톤 출품용 <b>패러디</b>로, 실제 보도가 아닙니다. 방송사·기자·내용은 모두 가상입니다.</div>
-        <div class="art-react"><span>👍 유용해요</span><span>↗ 공유하기</span></div>
-        <div class="other-posts"><h4>관련 뉴스</h4><ul>${others}</ul></div>
+        <p class="art-reporter">${a.reporter} ${T("기자", "reporter")}</p>
+        <div class="art-disclaimer">${T("※ 본 기사는 한화 라이프 × LIFE 해커톤 출품용 <b>패러디</b>로, 실제 보도가 아닙니다. 방송사·기자·내용은 모두 가상입니다.", "※ This article is a <b>parody</b> for the Hanwha Life × LIFE Hackathon, not real news. The broadcaster, reporter and content are all fictitious.")}</div>
+        <div class="art-react"><span>👍 ${T("유용해요", "Helpful")}</span><span>↗ ${T("공유하기", "Share")}</span></div>
+        <div class="other-posts"><h4>${T("관련 뉴스", "Related news")}</h4><ul>${others}</ul></div>
       </article>`;
   </script>
 </body>
