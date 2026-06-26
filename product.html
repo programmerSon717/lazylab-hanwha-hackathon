@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>상품 상세 — lazylab</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body data-page="products">
+  <header id="site-header"></header>
+  <main class="doc" id="page"></main>
+  <footer id="site-footer"></footer>
+
+  <script src="./config.js"></script>
+  <script src="./content.js"></script>
+  <script src="./platform-data.js"></script>
+  <script src="./terms-data.js"></script>
+  <script src="./layout.js"></script>
+  <script>
+    const won = LZ.won;
+    const p = LZ.byId(LZ.qs("id")) || PRODUCTS[0];
+    const m = PRODUCT_META[p.id] || {};
+    const t = TERMS[p.id] || {};
+    document.title = p.name + " — lazylab";
+
+    const tags = ["#" + (m.tag || "게으름").replace(/\//g, " #"), "#게으름보험", "#디포짓환급", "#작심삼일"];
+    const defRows = (t.definitions || []).map(([k, d]) => `<tr><td>${k}</td><td>${d}</td></tr>`).join("");
+    const benRows = (t.benefits || []).map(([c, pay]) => `<tr><td>${c}</td><td>${pay}</td></tr>`).join("");
+    const exc = (t.exclusions || []).map((x) => `<li>${x}</li>`).join("");
+    const cov = p.coverage.map((c) => `<li>${c}</li>`).join("");
+    const levers = p.profit.map(([n, d]) => `<li><b>${n}</b><span>${d}</span></li>`).join("");
+    const related = PRODUCTS.filter((x) => x.id !== p.id).slice(0, 5)
+      .map((x) => `<a href="product.html?id=${x.id}"><span>${x.emoji}</span><div><b>${x.name}</b><small>${(PRODUCT_META[x.id]||{}).tag||""}</small></div></a>`).join("");
+
+    document.getElementById("page").innerHTML = `
+      <nav class="breadcrumb">홈 › 보험상품 › <b>${m.tag || "게으름"}</b></nav>
+
+      <div class="doc-grid">
+        <article class="doc-main">
+          <span class="dp-cat">${m.tag || "게으름"}</span>
+          <h1 class="dp-title">${p.emoji} ${p.name}</h1>
+          <p class="dp-lead">${p.tagline}</p>
+          <p class="dp-meta">상품코드 ${t.code || "-"} · 가입자 ${(m.members||1000).toLocaleString("ko-KR")}명 · 조회수 ${(m.members||1000)*3}</p>
+
+          <div class="price-row">
+            <div class="price-box"><span>월 보험료</span><b>${won(p.premium)}</b></div>
+            <div class="price-box"><span>환급 디포짓</span><b>${won(p.deposit)}</b></div>
+            <div class="price-box"><span>가입대상</span><b style="font-size:14px">${t.target || "게으른 개인"}</b></div>
+          </div>
+
+          <h3 class="d-sec">보장 내용</h3>
+          <ul class="coverage">${cov}</ul>
+          <div class="refund">🎁 ${p.refund}</div>
+          <p class="consolation">😌 ${p.consolation}</p>
+
+          <h3 class="d-sec">약관 핵심 — 용어의 정의</h3>
+          <table class="doc-table"><tr><th>용어</th><th>정의</th></tr>${defRows}</table>
+
+          <h3 class="d-sec">보험금 지급 사유</h3>
+          <table class="doc-table"><tr><th>지급 사유</th><th>지급 내용</th></tr>${benRows}</table>
+
+          <h3 class="d-sec">면책 사항</h3>
+          <ol class="excl">${exc}</ol>
+
+          <div class="hashtags">${tags.map((h) => `<span class="tag-chip">${h}</span>`).join("")}</div>
+          <div class="doc-react"><span>🙂 궁금해요</span><span>☆ 관심상품</span><span>↗ 공유하기</span></div>
+
+          <div class="ad-banner">
+            <b>게으름연구소가 설계한 맞춤 보험</b>으로 확실하게!
+            <a class="btn-primary sm2" href="checkout.html?id=${p.id}">쿠폰받고 가입하기 ›</a>
+          </div>
+
+          <div class="dp-actions">
+            <a class="btn-primary" href="checkout.html?id=${p.id}">가입하기</a>
+            <button class="btn-ghost egg-toggle" type="button">🤫 보험사 수익구조 보기</button>
+          </div>
+          <div class="egg" hidden><ul class="levers">${levers}</ul><p class="punch">"${p.punch}"</p></div>
+
+          <div class="designer-card">
+            <div class="designer-info"><span class="d-ava">🐢</span><div><b>${(SUCCESS_CASES.find(c=>c.pid===p.id)||{}).designer || "게으름연구소 설계팀"}</b><small>게으름연구소 · lazylab 공식</small></div></div>
+            <a class="btn-primary" href="checkout.html?id=${p.id}">가입 상담 예약 ›</a>
+          </div>
+        </article>
+
+        <aside class="doc-side">
+          <h4>이런 상품도 어때요?</h4>
+          <div class="side-list">${related}</div>
+        </aside>
+      </div>`;
+
+    const egg = document.querySelector(".egg");
+    document.querySelector(".egg-toggle").addEventListener("click", (e) => {
+      egg.hidden = !egg.hidden; e.currentTarget.classList.toggle("open", !egg.hidden);
+    });
+  </script>
+</body>
+</html>

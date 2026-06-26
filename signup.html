@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>가입하기 — lazylab</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body data-page="signup">
+  <header id="site-header"></header>
+  <main class="auth-wrap" id="page"></main>
+  <footer id="site-footer"></footer>
+
+  <script src="./config.js"></script>
+  <script src="./content.js"></script>
+  <script src="./platform-data.js"></script>
+  <script src="./terms-data.js"></script>
+  <script src="./layout.js"></script>
+  <script>
+    const won = LZ.won;
+    const params = new URLSearchParams(location.search);
+    const pid = params.get("id");
+    const p = LZ.byId(pid);
+    const page = document.getElementById("page");
+    const C = window.LAZY_CONFIG || {};
+
+    function loggedIn(name) {
+      localStorage.setItem("lz_user", name);
+      page.innerHTML = `
+        <div class="auth-card done">
+          <div class="check-lg">✓</div>
+          <h2>${name}님, 환영해요!</h2>
+          <p>카카오 계정으로 로그인되었습니다.</p>
+          ${p ? `<div class="auth-product" style="margin-top:18px"><span>${p.emoji}</span><div><b>${p.name}</b><small>월 ${won(p.premium)} · 디포짓 ${won(p.deposit)}</small></div></div>` : ""}
+          <div class="done-actions" style="margin-top:20px">
+            ${p ? `<a class="btn-primary" href="checkout.html?id=${p.id}">결제하고 가입 완료 →</a>` : `<a class="btn-primary" href="index.html">홈으로</a>`}
+            <a class="btn-ghost" href="index.html">${p ? "다음에" : "둘러보기"}</a>
+          </div>
+          <p class="auth-legal">※ 카카오 로그인은 실제 연동입니다(키 설정 시). 결제는 카카오페이 테스트입니다.</p>
+        </div>`;
+    }
+
+    function signupCard() {
+      const sel = p
+        ? `<div class="auth-product"><span>${p.emoji}</span><div><b>${p.name}</b><small>월 ${won(p.premium)} · 디포짓 ${won(p.deposit)}</small></div></div>`
+        : "";
+      page.innerHTML = `
+        <div class="auth-card">
+          <div class="auth-tabs"><button class="active">간편 가입</button><button>기존 회원 로그인</button></div>
+          <p class="auth-promo">지금 가입 시, <b>첫 달 디포짓 100% 보장!</b></p>
+          <div class="auth-illust">💌<span class="auth-badge">100%</span></div>
+          ${sel}
+          <button class="sso kakao" data-sso="kakao">💬 카카오로 3초 만에 시작하기</button>
+          <button class="sso naver" data-sso="네이버">Ⓝ 네이버로 계속하기</button>
+          <button class="sso apple" data-sso="애플"> 애플로 계속하기</button>
+          <div class="auth-or"><span>또는</span></div>
+          <button class="sso lazy" data-sso="lazylab">🐢 lazylab 계정으로 가입</button>
+          <a class="auth-guest" href="index.html">비회원으로 둘러보기</a>
+          <p class="auth-legal">${window.KAKAO_ENABLED ? "카카오는 실제 로그인으로 연결됩니다." : "※ 카카오 키 미설정 — 현재 데모 모드입니다."} · 해커톤 패러디</p>
+        </div>`;
+
+      page.querySelectorAll("[data-sso]").forEach((b) =>
+        b.addEventListener("click", () => {
+          const kind = b.dataset.sso;
+          if (kind === "kakao" && window.KAKAO_ENABLED) {
+            // 실제 카카오 로그인
+            location.href = C.API_BASE + "/kakao-login" + (pid ? "?id=" + encodeURIComponent(pid) : "");
+            return;
+          }
+          // 데모 (그 외 SSO 또는 키 미설정)
+          demoDone(kind === "kakao" ? "카카오" : kind);
+        })
+      );
+    }
+
+    function demoDone(method) {
+      localStorage.setItem("lz_user", method);
+      page.innerHTML = `
+        <div class="auth-card done">
+          <div class="check-lg">✓</div>
+          <h2>가입 완료!</h2>
+          <p>${method} 계정으로 가입되었습니다.${p ? `<br><b>${p.name}</b> 가입 진행 중.` : ""}</p>
+          <p class="auth-promo2">이제 게으름은 lazylab이 책임집니다. 😌</p>
+          <div class="done-actions">
+            ${p ? `<a class="btn-primary" href="checkout.html?id=${p.id}">결제하기 →</a>` : `<a class="btn-primary" href="index.html">홈으로</a>`}
+            <a class="btn-ghost" href="reviews.html">후기 보기</a>
+          </div>
+          <p class="auth-legal">※ 데모 · 실제 결제는 발생하지 않습니다.</p>
+        </div>`;
+    }
+
+    // 라우팅
+    const login = params.get("login");
+    if (login === "ok") loggedIn(params.get("name") || "회원");
+    else if (login === "err") { alert("카카오 로그인 실패: " + (params.get("reason") || "원인 미상") ); signupCard(); }
+    else signupCard();
+  </script>
+</body>
+</html>

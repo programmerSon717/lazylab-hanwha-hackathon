@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>뉴스 — lazylab</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body data-page="news">
+  <header id="site-header"></header>
+  <main class="doc" id="page"></main>
+  <footer id="site-footer"></footer>
+
+  <script src="./config.js"></script>
+  <script src="./content.js"></script>
+  <script src="./platform-data.js"></script>
+  <script src="./terms-data.js"></script>
+  <script src="./layout.js"></script>
+  <script>
+    const i = parseInt(LZ.qs("id") || "0", 10);
+    const a = ARTICLES[i] || ARTICLES[0];
+    document.title = a.title + " — " + a.broadcaster;
+
+    const colors = { JTBC: "#eb1f2a", SBS: "#0a8a3c", MBC: "#0a57c1", KBS: "#1a2e6e" };
+    const bc = a.broadcaster;
+    const body = a.body.map((p) => `<p>${p}</p>`).join("");
+    const others = ARTICLES.map((x, j) => ({ x, j })).filter((o) => o.j !== i).slice(0, 5)
+      .map((o) => `<li><a href="article.html?id=${o.j}">· ${o.x.title}</a></li>`).join("");
+
+    document.getElementById("page").innerHTML = `
+      <nav class="breadcrumb">홈 › 뉴스 › <b>${a.category}</b></nav>
+      <article class="article">
+        <span class="art-channel" style="background:${colors[bc] || "#333"}">${bc} NEWS</span>
+        <h1 class="art-title">${a.title}</h1>
+        <div class="art-byline">
+          <span class="art-cat">${a.category}</span>
+          <span>${a.reporter} 기자</span>
+          <span>·</span>
+          <span>${a.date}</span>
+          <span>·</span>
+          <span>${bc}</span>
+        </div>
+        <div class="art-hero" style="background:linear-gradient(135deg, ${colors[bc] || "#333"}22, ${colors[bc] || "#333"}08)">
+          <span class="art-hero-ico">📰</span>
+          <span class="art-hero-cap">${bc} 단독 — 게으름연구소 제공</span>
+        </div>
+        <div class="art-body">${body}</div>
+        <p class="art-reporter">${a.reporter} 기자 (${a.reporter.toLowerCase().replace(/[^a-z]/g,"") || "reporter"}@${bc.toLowerCase()}.example)</p>
+        <div class="art-disclaimer">※ 본 기사는 한화 라이프 × LIFE 해커톤 출품용 <b>패러디</b>로, 실제 보도가 아닙니다. 방송사·기자·내용은 모두 가상입니다.</div>
+        <div class="art-react"><span>👍 유용해요</span><span>↗ 공유하기</span></div>
+        <div class="other-posts"><h4>관련 뉴스</h4><ul>${others}</ul></div>
+      </article>`;
+  </script>
+</body>
+</html>

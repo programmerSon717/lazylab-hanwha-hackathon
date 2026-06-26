@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>가입사례 — lazylab</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body data-page="cases">
+  <header id="site-header"></header>
+  <main>
+    <section class="dark-hero">
+      <p class="dh-eyebrow">REAL CASES</p>
+      <h1>게으름을 극복한 실제 사례</h1>
+      <p>lazylab 가입자들이 디포짓을 건 뒤 어떻게 달라졌는지 확인해 보세요.</p>
+    </section>
+    <section class="list-wrap">
+      <div class="case-grid" id="case-grid"></div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+
+  <script src="./config.js"></script>
+  <script src="./content.js"></script>
+  <script src="./platform-data.js"></script>
+  <script src="./terms-data.js"></script>
+  <script src="./layout.js"></script>
+  <script>
+    document.getElementById("case-grid").innerHTML = SUCCESS_CASES.map(
+      (c, i) => `<a class="ccard" href="case.html?id=${i}">
+        <div class="ccard-head"><span class="ccard-emoji">${c.emoji}</span><b>${c.name}</b><time>${c.date}</time></div>
+        <h5>${c.title}</h5>
+        <p>${c.desc}</p>
+        <span class="result-badge">⚖️ ${c.badge}</span>
+      </a>`
+    ).join("");
+  </script>
+</body>
+</html>
