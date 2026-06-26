@@ -7,20 +7,24 @@
 
 ## 🎯 5분 발표 — 임원(상무이사) 대상 / 5-Minute Executive Pitch
 
-### 🪝 후킹 문구 (3안 중 택1) / Hook (pick one)
+### 🪝 후킹 / Hook
+**⭐ 추천 오프닝 / Recommended opening**
+**[KO]** "청년들이 가장 고민하는 게 뭘까요? — **바로 게으름입니다.** 영(MZ) 제너레이션의 약 **80%**가 미루기·게으름으로 일상에 어려움을 겪습니다. 저희는 그 게으름을 **보험으로 만들었습니다.**"
+**[EN]** "What do young people worry about most? — **Laziness.** Around **80%** of the young (MZ) generation struggle in daily life with procrastination. So we turned that laziness **into insurance.**"
+
+**다른 후킹 대안 / Alternatives**
 1. **[KO]** "상무님, 헬스장이 가장 돈을 많이 버는 회원은 누구일까요? — **한 번도 안 나오는 회원**입니다. 저희는 그 원리를 보험으로 만들었습니다."
    **[EN]** "Which gym member is the most profitable? **The one who never shows up.** We turned that principle into insurance."
 2. **[KO]** "보험사는 보통 고객이 사고 나지 않길 바랍니다. 저희는 반대입니다 — **고객이 계속 게으르길** 바랍니다. 그게 수익이거든요."
    **[EN]** "Insurers usually hope customers never have an accident. We're the opposite — **we hope they stay lazy.** That's our revenue."
-3. **[KO]** "매년 1월, 수백만 명이 결심하고 3일 만에 포기합니다. 저희는 그 **'작심삼일'에 가격표를 붙였습니다.**"
-   **[EN]** "Every January, millions make resolutions and quit in three days. We **put a price tag on that failure.**"
 
 ---
 
 ### ⏱ 타임라인 / Timeline
 
 **[0:00–0:30] 후킹 / Hook**
-> 위 후킹 문구 1번으로 시작. (Open with Hook #1.)
+> ⭐ 추천 오프닝으로 시작: **"청년들이 가장 고민하는 게 뭘까요? 바로 게으름입니다."** → 80% 통계로 연결.
+> Open with: **"What do young people worry about most? Laziness."** → lead into the 80% stat.
 
 **[0:30–1:30] 문제 — 게으름은 이제 '사회적 문제' / Problem — laziness is now a social problem**
 **[KO]** "지금 게으름은 개인의 흠이 아니라 **사회적 문제**가 됐습니다. 한 조사에 따르면 **영(MZ) 제너레이션의 약 80%가 미루기와 게으름으로 일상에 어려움을 겪는다**고 합니다. 번아웃, 도파민 과잉, 무기력의 시대죠. 다들 매년 결심하지만 의지는 평균 3일을 못 넘깁니다 — 헬스장은 등록만, 인강은 결제만, 돈은 모으려다 텅장. 동기부여 앱은 넘쳐나지만 알림은 무시하면 그만, **행동을 강제할 장치가 없습니다.** 그리고 보험은 큰 사고만 보장할 뿐, 이 거대한 '일상의 게으름' 시장은 **아무도 손대지 않았습니다.** 즉, 80%가 겪는 문제이자 아무도 공략 안 한 시장입니다."
